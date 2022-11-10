@@ -1,45 +1,35 @@
 ﻿using UnitConversion.ConversionType;
+using UnitConversion.Interfaces;
 using UnitConversion.Model;
 
 namespace UnitConversion;
-public class Conversion
+public class Conversion : IConversion
 {
-    private ISIComparer _siComparer;
-    private Length _LengthConvertor;
-    private IUnit _unit;
+    private ISIPrefixes _siPrefixes;
+    private IBaseUnit _unit;
 
-    public Conversion(ISIComparer sIComparer, IUnit unit)
+    public Conversion()
     {
-        _LengthConvertor = new Length(new string[] { "meter", "inch", "feet", "meters", "inches", "feets" });
-        _siComparer = sIComparer;
-        _unit = unit;
+        _siPrefixes = new SIPrefixes();
+        _unit = new Unit(new List<MetricsType>()
+        {
+            new MetricsType(typeof(Length), new List<MetricsSearchKeywords>()
+            {
+                new MetricsSearchKeywords(UnitMetrics.Meter, new string[] { "meter", "meters" }),
+                new MetricsSearchKeywords(UnitMetrics.Inch, new string[] { "inch", "inches" }),
+                new MetricsSearchKeywords(UnitMetrics.Feet, new string[] { "feet", "feets" })
+            })
+        });
     }
 
     public string CalculateConversion(string fromUnitWithValue, string toUnit)
     {
-        InputUnit inputUnit = HandleInputs(fromUnitWithValue, toUnit);
+        InputUnit inputUnit = new InputUnit(fromUnitWithValue, toUnit, _siPrefixes);
 
-        var keke = _unit.Validate(inputUnit.FromUnit, inputUnit.ToUnit);
-        var valueForConversion = _siComparer.GetValueOfNumberAndPrefixSI(inputUnit.Value, inputUnit.FromUnit);
+        var fromToConversionModel = _unit.GetConversionUnits(inputUnit.FromUnit, inputUnit.ToUnit);
 
-        return "1 meter";
-    }
+        var result = fromToConversionModel?.ConversionInstance?.ConvertFromTo(inputUnit.Value, fromToConversionModel);
 
-    private InputUnit HandleInputs(string fromInput, string toInput)
-    {
-        string stringUnitValue = new(fromInput.Where(Char.IsDigit).ToArray());
-        int.TryParse(stringUnitValue, out int unitValue);
-
-        string fromUnit = new(fromInput.Where(Char.IsLetter).ToArray());
-        var siPrefix = _siComparer.GetPrefix(fromUnit);
-        string toUnit = new(toInput.Where(Char.IsLetter).ToArray());
-
-        return new InputUnit
-        {
-            Value = unitValue,
-            UnitPrefix = siPrefix,
-            FromUnit = _siComparer.RemovePrefix(fromUnit, siPrefix.PrefixName),
-            ToUnit = toUnit
-        };
+        return $"{result} {inputUnit.ToUnit}";
     }
 }

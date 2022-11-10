@@ -3,5 +3,5 @@ public enum UnitMetrics
 {
     Meter,
     Inch,
-    Foot
+    Feet
 }

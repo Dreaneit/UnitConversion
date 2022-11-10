@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/UnitConversion/v17
+/UnitConversion/.vs
+/UnitConversion/UnitConversion/bin/Debug/net6.0
+/UnitConversion/UnitConversion/obj
+/UnitConversion/UnitConversion.Api/bin/Debug/net6.0
+/UnitConversion/UnitConversion.Api/obj

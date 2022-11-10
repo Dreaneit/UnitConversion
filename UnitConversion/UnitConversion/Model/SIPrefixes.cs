@@ -1,10 +1,10 @@
 ﻿namespace UnitConversion.Model;
 public class SIPrefix
 {
-    public SIPrefix(string prefixName, decimal multiplier)
+    public SIPrefix(string prefixName, double multiplier)
     {
         PrefixName = prefixName;
-        Multiplier = multiplier;
+        Multiplier = (decimal)Math.Pow(10, multiplier);
     }
 
     public string PrefixName { get; set; }

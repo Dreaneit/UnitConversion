@@ -1,10 +1,11 @@
-﻿using UnitConversion.Model;
+﻿using UnitConversion.Interfaces;
+using UnitConversion.Model;
 
 namespace UnitConversion;
-public class SIComparer : ISIComparer
+public class SIPrefixes : ISIPrefixes
 {
     private readonly List<SIPrefix> _siPrefixes;
-    public SIComparer()
+    public SIPrefixes()
     {
         _siPrefixes = new List<SIPrefix>()
         {
@@ -31,25 +32,12 @@ public class SIComparer : ISIComparer
         };
     }
 
-    public List<SIPrefix> SiPrefixes { get { return _siPrefixes; } }
-
-    public SIPrefix GetPrefix(string unit) => _siPrefixes.Select(x => x).Where(x => x.PrefixName.Contains(unit)).FirstOrDefault();
+    public SIPrefix? GetPrefix(string unit) => _siPrefixes.FirstOrDefault(x => unit.Contains(x.PrefixName));
     public string? RemovePrefix(string unit, string? prefix)
     {
         if (prefix == null)
             return unit;
 
         return unit.Replace(prefix, string.Empty);
-    }
-
-    public int GetValueOfNumberAndPrefixSI(int value, string? unit)
-    {
-        if (string.IsNullOrEmpty(unit))
-            throw new ArgumentNullException(nameof(unit));
-
-        var isSiPrefix = _siPrefixes.Select(x => x.PrefixName).Where(x => x.Contains(unit));
-
-        return 2;
-
     }
 }
